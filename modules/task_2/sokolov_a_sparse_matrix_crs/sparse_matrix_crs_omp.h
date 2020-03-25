@@ -1,6 +1,6 @@
 // Copyright 2020 Sokolov Andrey
-#ifndef MODULES_TASK_1_SOKOLOV_A_SPARSE_MATRIX_CRS_OMP_SPARSE_MATRIX_CRS_OMP_H_
-#define MODULES_TASK_1_SOKOLOV_A_SPARSE_MATRIX_CRS_OMP_SPARSE_MATRIX_CRS_OMP_H_
+#ifndef MODULES_TASK_2_SOKOLOV_A_SPARSE_MATRIX_CRS_SPARSE_MATRIX_CRS_OMP_H_
+#define MODULES_TASK_2_SOKOLOV_A_SPARSE_MATRIX_CRS_SPARSE_MATRIX_CRS_OMP_H_
 #include <iostream>
 #include <iomanip>
 #include <cmath>
@@ -12,17 +12,17 @@
 using Matrix = std::vector<std::vector<double>>;
 
 class SparseMatrix {
-public:
+ public:
     size_t rows;
     size_t cols;
     std::vector<double> value;
-    std::vector<size_t> colIndex;  // Column numbers for each item
-    std::vector<size_t> rowIndex;  // Index of the beginning of each line
+    std::vector<int> colIndex;  // Column numbers for each item
+    std::vector<int> rowIndex;  // Index of the beginning of each line
      SparseMatrix() : rows(0), cols(0) {}
      SparseMatrix(size_t _rows, size_t _cols,
                   std::vector<double> _value,
-                  std::vector<size_t>    _colIndex,
-                  std::vector<size_t>    _rowIndex);
+                  std::vector<int>    _colIndex,
+                  std::vector<int>    _rowIndex);
      explicit SparseMatrix(const Matrix& matrix);
      SparseMatrix(const SparseMatrix& matrix) = default;
      SparseMatrix(size_t _rows, size_t _cols, size_t _elemsCount);
@@ -40,10 +40,10 @@ public:
 
 SparseMatrix SparseMatMul(const SparseMatrix& matrixA, const SparseMatrix& matrixB);
 SparseMatrix SparseMatMulOmp(const SparseMatrix& matrixA, const SparseMatrix& matrixB);
-Matrix MatMul(const Matrix& matrixA, const Matrix& matrixB, double& time);
+Matrix MatMul(const Matrix& matrixA, const Matrix& matrixB, const double& time);
 
 Matrix generateMatrix(const size_t& rows, const size_t& cols, const size_t& coeff);
 
 void print(const Matrix& matrix);
 
-#endif  // MODULES_TASK_1_SOKOLOV_A_SPARSE_MATRIX_CRS_OMP_SPARSE_MATRIX_CRS_OMP_H_
+#endif  // MODULES_TASK_2_SOKOLOV_A_SPARSE_MATRIX_CRS_SPARSE_MATRIX_CRS_OMP_H_

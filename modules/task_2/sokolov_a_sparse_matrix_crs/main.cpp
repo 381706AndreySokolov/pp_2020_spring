@@ -1,7 +1,7 @@
 // Copyright 2020 Sokolov Andrey
 #include <gtest/gtest.h>
-#include <vector>
 #include <omp.h>
+#include <vector>
 #include "./sparse_matrix_crs_omp.h"
 
 // #define DEBUG
@@ -33,8 +33,8 @@ TEST(Sparse_Matrix, Test_Create_Sparse_Matrix) {
     size_t rows{ 6 };
     size_t cols{ 6 };
     std::vector<double> value{ 1.1, 2.2, 3.3, 4.4, 8.8, 5.5, 7.7, 1.1, 6.6 };
-    std::vector<size_t> colIndex{ 0, 4, 2, 3, 3, 5, 1, 2, 5 };
-    std::vector<size_t> rowIndex{ 0, 2, 4, 4, 6, 6, 9 };
+    std::vector<int> colIndex{ 0, 4, 2, 3, 3, 5, 1, 2, 5 };
+    std::vector<int> rowIndex{ 0, 2, 4, 4, 6, 6, 9 };
     SparseMatrix sparseMatrixB{ rows, cols, value, colIndex, rowIndex };
 
     ASSERT_EQ(sparseMatrixA, sparseMatrixB);
@@ -44,14 +44,14 @@ TEST(Sparse_Matrix, Test_Compare_Sparse_Matrix) {
     size_t rowsA{ 6 };
     size_t colsA{6};
     std::vector<double> valueA{1.1, 2.2, 3.3, 4.4, 8.8, 5.5, 7.7, 1.1, 6.6};
-    std::vector<size_t> colIndexA{0, 4, 2, 3, 3, 5, 1, 2, 5};
-    std::vector<size_t> rowIndexA{0, 2, 4, 4, 6, 6, 9};
+    std::vector<int> colIndexA{0, 4, 2, 3, 3, 5, 1, 2, 5};
+    std::vector<int> rowIndexA{0, 2, 4, 4, 6, 6, 9};
 
     size_t rowsB{ 6 };
     size_t colsB{ 6 };
     std::vector<double> valueB{ 1.1, 2.2, 3.3, 4.4, 8.8, 5.5, 7.7, 1.1, 6.6 };
-    std::vector<size_t> colIndexB{ 0, 4, 2, 3, 3, 5, 1, 2, 5 };
-    std::vector<size_t> rowIndexB{ 0, 2, 4, 4, 6, 6, 9 };
+    std::vector<int> colIndexB{ 0, 4, 2, 3, 3, 5, 1, 2, 5 };
+    std::vector<int> rowIndexB{ 0, 2, 4, 4, 6, 6, 9 };
 
     SparseMatrix matrixA{ rowsA, colsA, valueA, colIndexA, rowIndexA };
     SparseMatrix matrixB{ rowsB, colsB, valueB, colIndexB, rowIndexB };
@@ -59,11 +59,11 @@ TEST(Sparse_Matrix, Test_Compare_Sparse_Matrix) {
 }
 
 TEST(Sparse_Matrix, Test_Sparse_To_Matrix) {
-    size_t rowsA{ 6 };
-    size_t colsA{ 6 };
+    size_t rowsA{6};
+    size_t colsA{6};
     std::vector<double> valueA{ 1.1, 2.2, 3.3, 4.4, 8.8, 5.5, 7.7, 1.1, 6.6 };
-    std::vector<size_t> colIndexA{ 0, 4, 2, 3, 3, 5, 1, 2, 5 };
-    std::vector<size_t> rowIndexA{ 0, 2, 4, 4, 6, 6, 9 };
+    std::vector<int> colIndexA{ 0, 4, 2, 3, 3, 5, 1, 2, 5 };
+    std::vector<int> rowIndexA{ 0, 2, 4, 4, 6, 6, 9 };
 
     SparseMatrix matrixSparse{ rowsA, colsA, valueA, colIndexA, rowIndexA };
     Matrix       matrix{ matrixSparse.SparseToMatrix() };
@@ -159,14 +159,14 @@ TEST(Sparse_Matrix, Test_Sparse_Matrix_Miltiplication) {
     size_t rowsA{ 6 };
     size_t colsA{ 6 };
     std::vector<double> valueA{ 1.1, 2.2, 3.3, 4.4, 8.8, 5.5, 7.7, 1.1, 6.6 };
-    std::vector<size_t> colIndexA{ 0, 4, 2, 3, 3, 5, 1, 2, 5 };
-    std::vector<size_t> rowIndexA{ 0, 2, 4, 4, 6, 6, 9 };
+    std::vector<int> colIndexA{ 0, 4, 2, 3, 3, 5, 1, 2, 5 };
+    std::vector<int> rowIndexA{ 0, 2, 4, 4, 6, 6, 9 };
 
     size_t rowsB{ 6 };
     size_t colsB{ 6 };
     std::vector<double> valueB{ 1.1, 2.2, 3.3, 4.4, 8.8, 5.5, 7.7, 1.1, 6.6 };
-    std::vector<size_t> colIndexB{ 0, 4, 2, 3, 3, 5, 1, 2, 5 };
-    std::vector<size_t> rowIndexB{ 0, 2, 4, 4, 6, 6, 9 };
+    std::vector<int> colIndexB{ 0, 4, 2, 3, 3, 5, 1, 2, 5 };
+    std::vector<int> rowIndexB{ 0, 2, 4, 4, 6, 6, 9 };
 
     Matrix goldMatrix{ { 1.21, 0.0,   0.0,   0.0,   2.42, 0.0   },
                        { 0.0,  0.0,   0.0,   38.72, 0.0,  24.2  },
@@ -294,26 +294,26 @@ TEST(Sparse_Matrix, Test_Both_Matrix_Miltiplication_With_Rand_Gen) {
 }
 
 TEST(Sparse_Matrix, Test_Omp_Matrix_Miltiplication_With_Rand_Gen) {
-    constexpr size_t size{7000};
-    Matrix matrixA{ generateMatrix(size, size, 10) };
-    Matrix matrixB{ generateMatrix(size, size, 10) };
-    std::cout << "Generated!" << std::endl;
+    constexpr size_t size{100};
+    Matrix matrixA{generateMatrix(size, size, 10)};
+    Matrix matrixB{generateMatrix(size, size, 10)};
+    // std::cout << "Generated!" << std::endl;
     SparseMatrix sparseMatrixA{ matrixA };
     SparseMatrix sparseMatrixB{ matrixB };
 
-    std::cout << "Sparse created!" << std::endl;
+    // std::cout << "Sparse created!" << std::endl;
     double t1Seq = omp_get_wtime();
     SparseMatrix resultSparse = SparseMatMul(sparseMatrixA, sparseMatrixB);
     double t2Seq = omp_get_wtime();
-    std::cout << "Seq MatMul Done!" << std::endl;
+    // std::cout << "Seq MatMul Done!" << std::endl;
     double t1Omp = omp_get_wtime();
     SparseMatrix resultSparseOmp = SparseMatMulOmp(sparseMatrixA, sparseMatrixB);
     double t2Omp = omp_get_wtime();
-    std::cout << "OMP MatMul Done!" << std::endl;
+    // std::cout << "OMP MatMul Done!" << std::endl;
     double tMul = 0;
-    //Matrix result = MatMul(matrixA, matrixB, tMul);
-    //SparseMatrix resultToSparse{ result };
-    //ASSERT_NEAR_SPARSE_MATRIX(resultSparse, resultToSparse, 1e-6);
+    // Matrix result = MatMul(matrixA, matrixB, tMul);
+    // SparseMatrix resultToSparse{ result };
+    // ASSERT_NEAR_SPARSE_MATRIX(resultSparse, resultToSparse, 1e-6);
 #ifdef DEBUG_LAST
     sparseMatrixA.printDefault();
     std::cout << std::endl;
@@ -338,10 +338,9 @@ TEST(Sparse_Matrix, Test_Omp_Matrix_Miltiplication_With_Rand_Gen) {
     resultSparseOmp.printMatrix();
     std::cout << std::endl;
 #endif
-    
-    std::cout << "OMP_Sparse_Mul: " << t2Omp - t1Omp << std::endl;
-    std::cout << "Seq_Sparse_Mul: " << t2Seq - t1Seq << std::endl;
-    //std::cout << "Seq_Mul: " << tMul << std::endl;
-    std::cout << "Acseleration_Sparse_Mul " << (t2Seq - t1Seq) / (t2Omp - t1Omp) << std::endl;
+    // std::cout << "OMP_Sparse_Mul: " << t2Omp - t1Omp << std::endl;
+    // std::cout << "Seq_Sparse_Mul: " << t2Seq - t1Seq << std::endl;
+    // std::cout << "Seq_Mul: " << tMul << std::endl;
+    // std::cout << "Acseleration_Sparse_Mul " << (t2Seq - t1Seq) / (t2Omp - t1Omp) << std::endl;
     ASSERT_NEAR_SPARSE_MATRIX(resultSparse, resultSparseOmp, 1e-6);
 }
