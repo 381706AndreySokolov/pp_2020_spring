@@ -4,17 +4,20 @@
 #include "./sparse_matrix_crs_omp.h"
 
 SparseMatrix::SparseMatrix(const Matrix& matrix) {
-    //std::cout << "Started!" << std::endl;
+    std::cout << "Started constructor!" << std::endl;
     rows = matrix.size();
     cols = matrix[0].size();
 
     size_t elemsInRow{0};
     constexpr double tolerance{1e-6};
-    //std::cout << "Start reserve!" << std::endl;
+    std::cout << "Start reserve!" << std::endl;
+    rowIndex = {};
+    colIndex = {};
+    value = {};
     rowIndex.reserve(rows * cols);
     colIndex.reserve(rows * cols);
     value.reserve(rows + 1);
-    //std::cout << "Reserved!" << std::endl;
+    std::cout << "Reserved!" << std::endl;
     rowIndex.push_back(0);
 
     for (size_t idx{0}; idx < rows; ++idx) {
@@ -25,7 +28,6 @@ SparseMatrix::SparseMatrix(const Matrix& matrix) {
                 ++elemsInRow;
             }
         }
-        //std::cout << "Row " << idx << " done!" << std::endl;
         rowIndex.push_back(elemsInRow);
     }
 }
@@ -100,6 +102,14 @@ SparseMatrix SparseMatMul(const SparseMatrix& matrixA, const SparseMatrix& matri
     SparseMatrix result{};
     result.rows = matrixA.rows;
     result.cols = matrixB.cols;
+    std::cout << "Start reserve!" << std::endl;
+    result.rowIndex = {};
+    result.colIndex = {};
+    result.value = {};
+    result.rowIndex.reserve(result.rows + 1);
+    result.colIndex.reserve(result.rows * result.cols);
+    result.value.reserve(result.rows * result.cols);
+    std::cout << "Finish reserve!" << std::endl;
     result.rowIndex.push_back(0);
     std::vector<double> tmpResultRow(matrixA.rows, 0);
 
@@ -130,7 +140,11 @@ SparseMatrix SparseMatMulOmp(const SparseMatrix& matrixA, const SparseMatrix& ma
     SparseMatrix result{};
     result.rows = matrixA.rows;
     result.cols = matrixB.cols;
-    result.rowIndex.resize(matrixA.rows + 1);
+    std::cout << "Start reserve!" << std::endl;
+    result.rowIndex.reserve(result.rows + 1);
+    result.colIndex.reserve(result.rows * result.cols);
+    result.value.reserve(result.rows * result.cols);
+    std::cout << "Finish reserve!" << std::endl;
     
     std::vector<int> tmpResultRow(matrixA.rows + 1, 0);
     std::vector<int>* tmpResultCols = new std::vector<int>[matrixA.rows];
@@ -187,10 +201,7 @@ Matrix MatMul(const Matrix& matrixA, const Matrix& matrixB, double& time) {
     size_t colsA = matrixA[0].size();
     size_t colsB = matrixB[0].size();
 
-    Matrix result{rowsA};
-    for (size_t idx{0}; idx < rowsA; ++idx) {
-        result[idx].resize(colsB);
-    }
+    Matrix result(rowsA, std::vector<double>(colsB));
     double t1 = omp_get_wtime();
     for (size_t idx{0}; idx < rowsA; ++idx) {
         for (size_t jdx{0}; jdx < colsB; ++jdx) {
@@ -208,20 +219,19 @@ Matrix MatMul(const Matrix& matrixA, const Matrix& matrixB, double& time) {
 // coeff from 0 to 100
 Matrix generateMatrix(const size_t& rows, const size_t& cols, const size_t& coeff) {
     Matrix result{};
-    result.resize(rows);
-    for (size_t idx{0}; idx < rows; ++idx) {
-        result[idx].resize(cols);
-    }
+    result.resize(rows, std::vector<double>(cols));
+
     std::random_device rd{};
     std::mt19937 mt {rd()};
     std::uniform_real_distribution<double> disValue{ 0.0, 10.0 };
     std::uniform_int_distribution<size_t> disProbability {0, 100};
 
-    for (size_t idx{ 0 }; idx < rows; ++idx) {
-        for (size_t jdx{ 0 }; jdx < cols; ++jdx) {
-            result[idx][jdx] = 0.0;
+    for (size_t idx{0U}; idx < rows; ++idx) {
+        for (size_t jdx{0U}; jdx < cols; ++jdx) {
             if (disProbability(mt) <= coeff) {
                 result[idx][jdx] = disValue(mt);
+            } else {
+                result[idx][jdx] = 0.0;
             }
         }
     }

@@ -87,7 +87,7 @@ TEST(Sparse_Matrix, Test_Sparse_To_Matrix) {
     ASSERT_EQ(matrixSparse, result);
 }
 
-TEST(Sparse_Matrix, DISABLED_Test_Random_Sparse_To_Matrix) {
+TEST(Sparse_Matrix, Test_Random_Sparse_To_Matrix) {
     SparseMatrix matrixSparse{ generateMatrix(50, 50, 2) };
     Matrix       matrix{ matrixSparse.SparseToMatrix() };
     SparseMatrix result{ matrix };
@@ -294,7 +294,7 @@ TEST(Sparse_Matrix, Test_Both_Matrix_Miltiplication_With_Rand_Gen) {
 }
 
 TEST(Sparse_Matrix, Test_Omp_Matrix_Miltiplication_With_Rand_Gen) {
-    constexpr size_t size{5000};
+    constexpr size_t size{7000};
     Matrix matrixA{ generateMatrix(size, size, 10) };
     Matrix matrixB{ generateMatrix(size, size, 10) };
     std::cout << "Generated!" << std::endl;
