@@ -302,15 +302,15 @@ TEST(Sparse_Matrix, Test_Omp_Matrix_Miltiplication_With_Rand_Gen) {
     SparseMatrix sparseMatrixB{ matrixB };
 
     // std::cout << "Sparse created!" << std::endl;
-    double t1Seq = omp_get_wtime();
+    // double t1Seq = omp_get_wtime();
     SparseMatrix resultSparse = SparseMatMul(sparseMatrixA, sparseMatrixB);
-    double t2Seq = omp_get_wtime();
+    // double t2Seq = omp_get_wtime();
     // std::cout << "Seq MatMul Done!" << std::endl;
-    double t1Omp = omp_get_wtime();
+    // double t1Omp = omp_get_wtime();
     SparseMatrix resultSparseOmp = SparseMatMulOmp(sparseMatrixA, sparseMatrixB);
-    double t2Omp = omp_get_wtime();
+    // double t2Omp = omp_get_wtime();
     // std::cout << "OMP MatMul Done!" << std::endl;
-    double tMul = 0;
+    // double tMul = 0;
     // Matrix result = MatMul(matrixA, matrixB, tMul);
     // SparseMatrix resultToSparse{ result };
     // ASSERT_NEAR_SPARSE_MATRIX(resultSparse, resultToSparse, 1e-6);
